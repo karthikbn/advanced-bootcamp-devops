@@ -1,9 +1,10 @@
 name: Demo CI Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: 
+  #push:
+  #  branches:
+  #    - main
 
 jobs:
 
@@ -60,6 +61,7 @@ jobs:
           echo "Building application..."
           mkdir -p build
           echo "This is a dummy build" > build/output.txt
+          sleep 30
 
       - name: Show build output
         run: |
@@ -80,6 +82,7 @@ jobs:
           echo "Test 1: PASS"
           echo "Test 2: PASS"
           echo "Test 3: PASS"
+          sleep 30
 
 
   # Job 5 - depends on test
