@@ -1,0 +1,98 @@
+name: Demo CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # Job 1
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show repository files
+        run: |
+          echo "Repository contents:"
+          ls -la
+
+      - name: Prepare environment
+        run: |
+          echo "Preparing environment..."
+          echo "Environment ready!"
+
+
+  # Job 2 - runs independently of prepare
+  check:
+    name: Run Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run dummy check
+        run: |
+          echo "Running checks..."
+          echo "All checks passed!"
+
+
+  # Job 3 - depends on BOTH prepare and check
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    needs:
+      - prepare
+      - check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build dummy application
+        run: |
+          echo "Building application..."
+          mkdir -p build
+          echo "This is a dummy build" > build/output.txt
+
+      - name: Show build output
+        run: |
+          cat build/output.txt
+
+
+  # Job 4 - depends on build
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Run dummy tests
+        run: |
+          echo "Running tests..."
+          echo "Test 1: PASS"
+          echo "Test 2: PASS"
+          echo "Test 3: PASS"
+
+
+  # Job 5 - depends on test
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    needs: test
+
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy
+        run: |
+          echo "Deploying application..."
+          echo "Deployment successful!"
